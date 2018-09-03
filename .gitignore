@@ -1,0 +1,15 @@
+.DS_Store
+.DS_Store?
+._*
+.*.swp
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+node_modules
+build
+dist
+package-lock.json
+npm-debug.log
+.gignore
+.gz

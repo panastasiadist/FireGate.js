@@ -1,0 +1,9 @@
+* text=auto
+.gitattributes text
+.gitignore text
+.editorconfig text
+.babelrc text
+*.js text
+*.md text
+*.json text
+*.txt text

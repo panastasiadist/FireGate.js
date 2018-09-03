@@ -1,0 +1,26 @@
+
+/*
+module.exports = function (name, value, expires, path, domain, secure, httponly) {
+  var expiresString = '0';
+
+  if ('undefined' !== typeof expires) {
+    var date = new Date();
+    date.setTime(date.getTime() + (expires * 1000));
+    expiresString = date.toUTCString();
+  }
+
+  var cookie = name + '=' + value + ';expires=' + expiresString;
+
+  if ('undefined' !== typeof path)
+    cookie += ';path=' + path;
+
+  if ('undefined' !== typeof domain)
+    cookie += ';domain=' + domain;
+
+  if (true === secure)
+    cookie += ';secure';
+
+  if (true === httponly)
+    cookie += ';HttpOnly';
+}
+*/
