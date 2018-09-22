@@ -381,3 +381,8 @@ The way FireGate.js works, allows it to handle cookies before even being set by 
 
 ## Does FireGate.js automatically handle all cookies?
 It depends. FireGate.js is able to automatically handle/intercept all cookies set by other JavaScript code provided that it is activated before any other cookie-setting code is run. It doesn't handle cookies set in iframes as it is not possible to directly inject code in an iframe due to each browser's security features.
+
+# Our Great Supporters
+![Browserstack](https://firegatejs.anastasiadis.online/assets/browserstack-logo-200x43.png)
+
+We use [BrowserStack](https://browserstack.com) for R&D and testing purposes while developing FireGate.js.
