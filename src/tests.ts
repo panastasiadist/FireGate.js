@@ -1,9 +1,9 @@
-// Copyright (c) 2018 Panagiotis Anastasiadis
+// Copyright (c) 2021 Panagiotis Anastasiadis
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import cookieName from './filters/cookieName';
+import cookieName from './tests/cookieName';
 
 export default {
   cookieName,
