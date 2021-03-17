@@ -8,42 +8,42 @@ import FireGateJS from '../src/index';
 const cookiesModule = FireGateJS.cookies;
 
 test('attach() should return true', () => {
-  const result = cookiesModule.attach();
+  const result = cookiesModule.startFiltering();
   expect(result).toBe(true);
 });
 
 test('attach() should return false', () => {
-  const result = cookiesModule.attach();
+  const result = cookiesModule.startFiltering();
   expect(result).toBe(false);
 });
 
 test('detach() should return true', () => {
-  const result = cookiesModule.detach();
+  const result = cookiesModule.stopFiltering();
   expect(result).toBe(true);
 });
 
 test('detach() should return false', () => {
-  const result = cookiesModule.detach();
+  const result = cookiesModule.stopFiltering();
   expect(result).toBe(false);
 });
 
 test('attach() should return true', () => {
-  const result = cookiesModule.attach();
+  const result = cookiesModule.startFiltering();
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = cookiesModule.setCookiePolicy('permissive');
+  const result = cookiesModule.setFilteringPolicy('permissive');
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = cookiesModule.setCookiePolicy('restrictive');
+  const result = cookiesModule.setFilteringPolicy('restrictive');
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return false', () => {
-  const result = cookiesModule.setCookiePolicy('non_existent');
+  const result = cookiesModule.setFilteringPolicy('non_existent');
   expect(result).toBe(false);
 });
 /*
@@ -53,14 +53,14 @@ test('setCookiePolicy() should return false because of invalid type', () => {
 });
 */
 test('setCookiePolicy() should return true', () => {
-  const result = cookiesModule.setCookiePolicy({
+  const result = cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
   });
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = cookiesModule.setCookiePolicy({
+  const result = cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'block',
@@ -73,7 +73,7 @@ test('setCookiePolicy() should return true', () => {
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = cookiesModule.setCookiePolicy({
+  const result = cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -147,14 +147,14 @@ test('setCookiePolicy() should return false', () => {
 });
 */
 test('cookie1 should initially be blocked and then freed', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
   });
 
   document.cookie = 'cookie1=test';
   expect(document.cookie).not.toContain('cookie1=test');
 
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -170,14 +170,14 @@ test('cookie1 should initially be blocked and then freed', () => {
 });
 
 test('cookie2 should be blocked and not be freed', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
   });
 
   document.cookie = 'cookie2=test';
   expect(document.cookie).not.toContain('cookie2=test');
 
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -194,14 +194,14 @@ test('cookie2 should be blocked and not be freed', () => {
 });
 
 test('cookie3 should initially be blocked and then freed with cookie2', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
   });
 
   document.cookie = 'cookie3=test';
   expect(document.cookie).not.toContain('cookie3=test');
 
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -219,7 +219,7 @@ test('cookie3 should initially be blocked and then freed with cookie2', () => {
 });
 
 test('cookie4 should be blocked', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
   });
 
@@ -228,7 +228,7 @@ test('cookie4 should be blocked', () => {
 });
 
 test('cookie5 should be allowed', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'allow',
   });
 
@@ -237,7 +237,7 @@ test('cookie5 should be allowed', () => {
 });
 
 test('cookie6 should be blocked', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'allow',
     rules: [{
       action: 'block',
@@ -257,7 +257,7 @@ test('cookie6 should be blocked', () => {
 });
 
 test('cookie7 should be allowed', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -277,7 +277,7 @@ test('cookie7 should be allowed', () => {
 });
 
 test('cookie8a, cookie9a, cookie10 should be allowed, cookie10a blocked', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -311,21 +311,21 @@ test('cookie8a, cookie9a, cookie10 should be allowed, cookie10a blocked', () => 
 });
 
 test('cookie11 should be allowed', () => {
-  cookiesModule.setCookiePolicy('permissive');
+  cookiesModule.setFilteringPolicy('permissive');
 
   document.cookie = 'cookie11=test';
   expect(document.cookie).toContain('cookie11=test');
 });
 
 test('cookie12 should be blocked', () => {
-  cookiesModule.setCookiePolicy('restrictive');
+  cookiesModule.setFilteringPolicy('restrictive');
 
   document.cookie = 'cookie12=test';
   expect(document.cookie).not.toContain('cookie12=test');
 });
 
 test('cookie13 should be allowed', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -340,7 +340,7 @@ test('cookie13 should be allowed', () => {
 });
 
 test('cookie14 should be blocked', () => {
-  cookiesModule.setCookiePolicy({
+  cookiesModule.setFilteringPolicy({
     defaultsTo: 'allow',
     rules: [{
       action: 'block',

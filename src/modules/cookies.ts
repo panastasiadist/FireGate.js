@@ -3,6 +3,8 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import CookiePolicy from '../interfaces/CookiePolicy';
 import getPropertyAccessors from '../functions/getPropertyAccessors';
 import setPropertyAccessors from '../functions/setPropertyAccessors';
@@ -93,7 +95,7 @@ function cookies() {
    * fully permissive policy is in effect.
    * @returns {boolean} True on success.
    */
-  function attach() {
+  function startFiltering() {
     // Check if already filtering.
     if (cookieFilteringActive) {
       return false;
@@ -131,7 +133,7 @@ function cookies() {
    * Stops filtering allowing all cookies from now on.
    * @returns {boolean} True on success.
    */
-  function detach() {
+  function stopFiltering() {
     // Are we really filtering cookies right now?
     if (!cookieFilteringActive) {
       return false;
@@ -155,7 +157,7 @@ function cookies() {
    * @param policy The name of a built-in policy or a custom one.
    * @returns True on success.
    */
-  function setCookiePolicy(policy: string | CookiePolicy) {
+  function setFilteringPolicy(policy: string | CookiePolicy) {
     if (policy === 'permissive') {
       activePolicy = permissivePolicy;
     } else if (policy === 'restrictive') {
@@ -228,9 +230,9 @@ function cookies() {
   }
 
   return {
-    attach,
-    detach,
-    setCookiePolicy,
+    startFiltering,
+    stopFiltering,
+    setFilteringPolicy,
     freeCookies,
   };
 }
