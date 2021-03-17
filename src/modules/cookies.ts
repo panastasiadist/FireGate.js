@@ -176,7 +176,7 @@ function cookies() {
    * @param freeAll Whether to set all blocked cookies or not.
    * @returns The names of the cookies which got freed/set.
    */
-  function freeCookies(freeAll: boolean): string[] {
+  function freeCookies(which: 'all' | 'allowed' | string[]): string[] {
     const cookiesFreed = [];
     const newBlockedCookies = [];
 
@@ -195,16 +195,14 @@ function cookies() {
       // Prerequisite for a cookie to be freed is to be valid.
       if (details !== null) {
         /**
-         * If freeAll is true then all blocked cookies should be set even if not
-         * allowed by the active policy.
+         * If an array of cookie names has been specified, then check if this cookie's name is
+         * contained in the array. If not, the cookie won't be freed. However, the cookie will be
+         * freed if the caller has requested freeing all blocked cookies.
          */
-        let permit = freeAll;
+        let permit = Array.isArray(which) ? which.indexOf(details.name) > -1 : which === 'all';
 
-        /**
-         * If permit is false, then freeAll flag is not set and each blocked cookie must be checked
-         * again the active policy.
-         */
-        if (!permit) {
+        // One last chance to free the cookie if allowed by the active policy.
+        if (!permit && which === 'allowed') {
           if (isCookieAllowedByPolicy(details, activePolicy, tests)) {
             permit = true;
           }

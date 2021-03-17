@@ -164,7 +164,7 @@ test('cookie1 should initially be blocked and then freed', () => {
     }],
   });
 
-  const cookiesFreed = cookiesModule.freeCookies(false);
+  const cookiesFreed = cookiesModule.freeCookies('allowed');
   expect(document.cookie).toContain('cookie1=test');
   expect(cookiesFreed).toEqual(['cookie1']);
 });
@@ -187,7 +187,7 @@ test('cookie2 should be blocked and not be freed', () => {
     }],
   });
 
-  const cookiesFreed = cookiesModule.freeCookies(false);
+  const cookiesFreed = cookiesModule.freeCookies('allowed');
 
   expect(document.cookie).not.toContain('cookie2=test');
   expect(cookiesFreed).toEqual([]);
@@ -211,7 +211,7 @@ test('cookie3 should initially be blocked and then freed with cookie2', () => {
     }],
   });
 
-  const cookiesFreed = cookiesModule.freeCookies(true);
+  const cookiesFreed = cookiesModule.freeCookies('all');
 
   expect(document.cookie).toContain('cookie2=test');
   expect(document.cookie).toContain('cookie3=test');
@@ -352,4 +352,17 @@ test('cookie14 should be blocked', () => {
 
   document.cookie = 'cookie14=test';
   expect(document.cookie).not.toContain('cookie14=test');
+});
+
+test('cookie15 should be blocked', () => {
+  cookiesModule.setFilteringPolicy('restrictive');
+
+  document.cookie = 'cookie15=test';
+  expect(document.cookie).not.toContain('cookie15=test');
+});
+
+test('cookie14 should be freed but cookie15 should not.', () => {
+  cookiesModule.freeCookies(['cookie14']);
+  expect(document.cookie).toContain('cookie14=test');
+  expect(document.cookie).not.toContain('cookie15=test');
 });
