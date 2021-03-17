@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'"
   },
   "author": "Panos Anastasiadis",
   "license": "MIT",
