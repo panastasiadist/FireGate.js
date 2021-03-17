@@ -5,45 +5,45 @@
 
 import FireGateJS from '../src/index';
 
-const firegate = FireGateJS;
+const cookiesModule = FireGateJS.cookies;
 
 test('attach() should return true', () => {
-  const result = firegate.attach();
+  const result = cookiesModule.attach();
   expect(result).toBe(true);
 });
 
 test('attach() should return false', () => {
-  const result = firegate.attach();
+  const result = cookiesModule.attach();
   expect(result).toBe(false);
 });
 
 test('detach() should return true', () => {
-  const result = firegate.detach();
+  const result = cookiesModule.detach();
   expect(result).toBe(true);
 });
 
 test('detach() should return false', () => {
-  const result = firegate.detach();
+  const result = cookiesModule.detach();
   expect(result).toBe(false);
 });
 
 test('attach() should return true', () => {
-  const result = firegate.attach();
+  const result = cookiesModule.attach();
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = firegate.setCookiePolicy('permissive');
+  const result = cookiesModule.setCookiePolicy('permissive');
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = firegate.setCookiePolicy('restrictive');
+  const result = cookiesModule.setCookiePolicy('restrictive');
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return false', () => {
-  const result = firegate.setCookiePolicy('non_existent');
+  const result = cookiesModule.setCookiePolicy('non_existent');
   expect(result).toBe(false);
 });
 /*
@@ -53,14 +53,14 @@ test('setCookiePolicy() should return false because of invalid type', () => {
 });
 */
 test('setCookiePolicy() should return true', () => {
-  const result = firegate.setCookiePolicy({
+  const result = cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
   });
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = firegate.setCookiePolicy({
+  const result = cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'block',
@@ -73,7 +73,7 @@ test('setCookiePolicy() should return true', () => {
 });
 
 test('setCookiePolicy() should return true', () => {
-  const result = firegate.setCookiePolicy({
+  const result = cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -147,14 +147,14 @@ test('setCookiePolicy() should return false', () => {
 });
 */
 test('cookie1 should initially be blocked and then freed', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
   });
 
   document.cookie = 'cookie1=test';
   expect(document.cookie).not.toContain('cookie1=test');
 
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -164,20 +164,20 @@ test('cookie1 should initially be blocked and then freed', () => {
     }],
   });
 
-  const cookiesFreed = firegate.freeCookies(false);
+  const cookiesFreed = cookiesModule.freeCookies(false);
   expect(document.cookie).toContain('cookie1=test');
   expect(cookiesFreed).toEqual(['cookie1']);
 });
 
 test('cookie2 should be blocked and not be freed', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
   });
 
   document.cookie = 'cookie2=test';
   expect(document.cookie).not.toContain('cookie2=test');
 
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -187,21 +187,21 @@ test('cookie2 should be blocked and not be freed', () => {
     }],
   });
 
-  const cookiesFreed = firegate.freeCookies(false);
+  const cookiesFreed = cookiesModule.freeCookies(false);
 
   expect(document.cookie).not.toContain('cookie2=test');
   expect(cookiesFreed).toEqual([]);
 });
 
 test('cookie3 should initially be blocked and then freed with cookie2', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
   });
 
   document.cookie = 'cookie3=test';
   expect(document.cookie).not.toContain('cookie3=test');
 
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -211,7 +211,7 @@ test('cookie3 should initially be blocked and then freed with cookie2', () => {
     }],
   });
 
-  const cookiesFreed = firegate.freeCookies(true);
+  const cookiesFreed = cookiesModule.freeCookies(true);
 
   expect(document.cookie).toContain('cookie2=test');
   expect(document.cookie).toContain('cookie3=test');
@@ -219,7 +219,7 @@ test('cookie3 should initially be blocked and then freed with cookie2', () => {
 });
 
 test('cookie4 should be blocked', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
   });
 
@@ -228,7 +228,7 @@ test('cookie4 should be blocked', () => {
 });
 
 test('cookie5 should be allowed', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'allow',
   });
 
@@ -237,7 +237,7 @@ test('cookie5 should be allowed', () => {
 });
 
 test('cookie6 should be blocked', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'allow',
     rules: [{
       action: 'block',
@@ -257,7 +257,7 @@ test('cookie6 should be blocked', () => {
 });
 
 test('cookie7 should be allowed', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -277,7 +277,7 @@ test('cookie7 should be allowed', () => {
 });
 
 test('cookie8a, cookie9a, cookie10 should be allowed, cookie10a blocked', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -311,21 +311,21 @@ test('cookie8a, cookie9a, cookie10 should be allowed, cookie10a blocked', () => 
 });
 
 test('cookie11 should be allowed', () => {
-  firegate.setCookiePolicy('permissive');
+  cookiesModule.setCookiePolicy('permissive');
 
   document.cookie = 'cookie11=test';
   expect(document.cookie).toContain('cookie11=test');
 });
 
 test('cookie12 should be blocked', () => {
-  firegate.setCookiePolicy('restrictive');
+  cookiesModule.setCookiePolicy('restrictive');
 
   document.cookie = 'cookie12=test';
   expect(document.cookie).not.toContain('cookie12=test');
 });
 
 test('cookie13 should be allowed', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -340,7 +340,7 @@ test('cookie13 should be allowed', () => {
 });
 
 test('cookie14 should be blocked', () => {
-  firegate.setCookiePolicy({
+  cookiesModule.setCookiePolicy({
     defaultsTo: 'allow',
     rules: [{
       action: 'block',
