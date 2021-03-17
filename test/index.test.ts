@@ -1,66 +1,66 @@
-// Copyright (c) 2018 Panagiotis Anastasiadis
+// Copyright (c) 2021 Panagiotis Anastasiadis
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
 import FireGateJS from '../src/index';
 
-var firegate = FireGateJS;
+const firegate = FireGateJS;
 
 test('attach() should return true', () => {
-  var result = firegate.attach();
+  const result = firegate.attach();
   expect(result).toBe(true);
 });
 
 test('attach() should return false', () => {
-  var result = firegate.attach();
+  const result = firegate.attach();
   expect(result).toBe(false);
 });
 
 test('detach() should return true', () => {
-  var result = firegate.detach();
+  const result = firegate.detach();
   expect(result).toBe(true);
 });
 
 test('detach() should return false', () => {
-  var result = firegate.detach();
+  const result = firegate.detach();
   expect(result).toBe(false);
 });
 
 test('attach() should return true', () => {
-  var result = firegate.attach();
+  const result = firegate.attach();
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  var result = firegate.setCookiePolicy('permissive');
+  const result = firegate.setCookiePolicy('permissive');
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  var result = firegate.setCookiePolicy('restrictive');
+  const result = firegate.setCookiePolicy('restrictive');
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return false', () => {
-  var result = firegate.setCookiePolicy('non_existent');
+  const result = firegate.setCookiePolicy('non_existent');
   expect(result).toBe(false);
 });
-
+/*
 test('setCookiePolicy() should return false because of invalid type', () => {
-  var result = firegate.setCookiePolicy(null);
+  const result = firegate.setCookiePolicy(null);
   expect(result).toBe(false);
 });
-
+*/
 test('setCookiePolicy() should return true', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     defaultsTo: 'block',
   });
   expect(result).toBe(true);
 });
 
 test('setCookiePolicy() should return true', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'block',
@@ -73,7 +73,7 @@ test('setCookiePolicy() should return true', () => {
 });
 
 test('setCookiePolicy() should return true', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'allow',
@@ -84,9 +84,9 @@ test('setCookiePolicy() should return true', () => {
   });
   expect(result).toBe(true);
 });
-
+/*
 test('setCookiePolicy() should return false', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'invalid',
@@ -99,21 +99,21 @@ test('setCookiePolicy() should return false', () => {
 });
 
 test('setCookiePolicy() should return false', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     defaultsTo: 'block_invalid',
   });
   expect(result).toBe(false);
 });
 
 test('setCookiePolicy() should return false', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     default_invalid: 'block',
   });
   expect(result).toBe(false);
 });
 
 test('setCookiePolicy() should return false', () => {
-  var result = firegate.setCookiePolicy({
+  const result = firegate.setCookiePolicy({
     defaultsTo: 'block',
     rules: {},
   });
@@ -121,31 +121,31 @@ test('setCookiePolicy() should return false', () => {
 });
 
 test('setCookiePolicy() should return false', () => {
-  var success = firegate.setCookiePolicy({
+  const success = firegate.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'block',
-      when: {}
-    }]
+      when: {},
+    }],
   });
 
   expect(success).toBe(false);
 });
 
 test('setCookiePolicy() should return false', () => {
-  var success = firegate.setCookiePolicy({
+  const success = firegate.setCookiePolicy({
     defaultsTo: 'block',
     rules: [{
       action: 'block',
       when: {
-        'non_existent_filter': 'test'
-      }
-    }]
+        non_existent_filter: 'test',
+      },
+    }],
   });
 
   expect(success).toBe(false);
 });
-
+*/
 test('cookie1 should initially be blocked and then freed', () => {
   firegate.setCookiePolicy({
     defaultsTo: 'block',
@@ -159,12 +159,12 @@ test('cookie1 should initially be blocked and then freed', () => {
     rules: [{
       action: 'allow',
       when: {
-        cookieName: 'cookie1'
-      }
+        cookieName: 'cookie1',
+      },
     }],
   });
 
-  var cookiesFreed = firegate.freeCookies(false);
+  const cookiesFreed = firegate.freeCookies(false);
   expect(document.cookie).toContain('cookie1=test');
   expect(cookiesFreed).toEqual(['cookie1']);
 });
@@ -182,17 +182,16 @@ test('cookie2 should be blocked and not be freed', () => {
     rules: [{
       action: 'allow',
       when: {
-        cookieName: 'cookie1'
-      }
+        cookieName: 'cookie1',
+      },
     }],
   });
 
-  var cookiesFreed = firegate.freeCookies(false);
+  const cookiesFreed = firegate.freeCookies(false);
 
   expect(document.cookie).not.toContain('cookie2=test');
   expect(cookiesFreed).toEqual([]);
 });
-
 
 test('cookie3 should initially be blocked and then freed with cookie2', () => {
   firegate.setCookiePolicy({
@@ -207,12 +206,12 @@ test('cookie3 should initially be blocked and then freed with cookie2', () => {
     rules: [{
       action: 'allow',
       when: {
-        cookieName: 'cookie1'
-      }
+        cookieName: 'cookie1',
+      },
     }],
   });
 
-  var cookiesFreed = firegate.freeCookies(true);
+  const cookiesFreed = firegate.freeCookies(true);
 
   expect(document.cookie).toContain('cookie2=test');
   expect(document.cookie).toContain('cookie3=test');
@@ -240,17 +239,17 @@ test('cookie5 should be allowed', () => {
 test('cookie6 should be blocked', () => {
   firegate.setCookiePolicy({
     defaultsTo: 'allow',
-    rules: [{ 
+    rules: [{
       action: 'block',
       when: {
-        cookieName: 'cookie6'
-      }
+        cookieName: 'cookie6',
+      },
     }, {
       action: 'allow',
       when: {
-        cookieName: 'cookie6'
-      }
-    }]
+        cookieName: 'cookie6',
+      },
+    }],
   });
 
   document.cookie = 'cookie6=test';
@@ -260,17 +259,17 @@ test('cookie6 should be blocked', () => {
 test('cookie7 should be allowed', () => {
   firegate.setCookiePolicy({
     defaultsTo: 'block',
-    rules: [{ 
+    rules: [{
       action: 'allow',
       when: {
-        cookieName: 'cookie7'
-      }
+        cookieName: 'cookie7',
+      },
     }, {
       action: 'block',
       when: {
-        cookieName: 'cookie7'
-      }
-    }]
+        cookieName: 'cookie7',
+      },
+    }],
   });
 
   document.cookie = 'cookie7=test';
@@ -283,19 +282,19 @@ test('cookie8a, cookie9a, cookie10 should be allowed, cookie10a blocked', () => 
     rules: [{
       action: 'allow',
       when: {
-        cookieName: '^cookie8[a-z]$'
-      }
+        cookieName: '^cookie8[a-z]$',
+      },
     }, {
       action: 'allow',
       when: {
-        cookieName: '^cookie9[a-z]$'
-      }
+        cookieName: '^cookie9[a-z]$',
+      },
     }, {
       action: 'allow',
       when: {
-        cookieName: '^cookie10$'
-      }
-    }]
+        cookieName: '^cookie10$',
+      },
+    }],
   });
 
   document.cookie = 'cookie8a=test';
@@ -331,8 +330,8 @@ test('cookie13 should be allowed', () => {
     rules: [{
       action: 'allow',
       when: {
-        cookieName: 'cookie13'
-      }
+        cookieName: 'cookie13',
+      },
     }],
   });
 
@@ -346,8 +345,8 @@ test('cookie14 should be blocked', () => {
     rules: [{
       action: 'block',
       when: {
-        cookieName: 'cookie14'
-      }
+        cookieName: 'cookie14',
+      },
     }],
   });
 

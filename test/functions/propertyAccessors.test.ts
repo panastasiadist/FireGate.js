@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Panagiotis Anastasiadis
+// Copyright (c) 2021 Panagiotis Anastasiadis
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
@@ -6,15 +6,13 @@
 import setPropertyAccessors from '../../src/functions/setPropertyAccessors';
 
 test("should return 'test1' when accessing propertyA", () => {
-  var object = {
+  const object = {
     propertyA: '',
   };
 
-  var accessors = {
-    get: function() {
-      return 'test1';
-    },
-    set: function(val) {}
+  const accessors = {
+    get: () => 'test1',
+    set: () => { },
   };
 
   setPropertyAccessors(object, 'propertyA', accessors);
@@ -23,19 +21,15 @@ test("should return 'test1' when accessing propertyA", () => {
 });
 
 test("should return 'test2' when accessing propertyA", () => {
-  var object = {
+  const object = {
     propertyA: '',
   };
 
-  var storage = '';
+  let storage = '';
 
-  var accessors = {
-    get: function() { 
-      return storage;
-    },
-    set: function(val) {
-      storage = val;
-    }
+  const accessors = {
+    get: () => storage,
+    set: (val: string) => { storage = val; },
   };
 
   setPropertyAccessors(object, 'propertyA', accessors);

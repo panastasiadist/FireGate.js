@@ -1,11 +1,11 @@
-// Copyright (c) 2018 Panagiotis Anastasiadis
+// Copyright (c) 2021 Panagiotis Anastasiadis
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
 import getCookieDetails from '../../src/functions/getCookieDetails';
 
-var sets = [{
+const sets = [{
   cookie: 'cookie=test',
   expected: {
     name: 'cookie',
@@ -103,13 +103,11 @@ var sets = [{
   },
 }];
 
-var length = sets.length;
-for (var i = 0; i < length; i += 1) {
-  var set = sets[i];
+sets.forEach((set) => {
   test(`cookie '${set.cookie}' details should result to ${JSON.stringify(set.expected)}`, () => {
     expect(getCookieDetails(set.cookie)).toStrictEqual(set.expected);
   });
-}
+});
 
 test("cookie 'cookie=' should return null", () => {
   expect(getCookieDetails('cookie=')).toBeNull();
