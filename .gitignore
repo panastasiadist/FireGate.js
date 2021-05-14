@@ -11,5 +11,4 @@ build
 dist
 package-lock.json
 npm-debug.log
-.gignore
 .gz

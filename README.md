@@ -1,69 +1,49 @@
 # FireGate.js - The JavaScript Cookie Firewall
-FireGate.js is a tiny client side JavaScript library acting as a global and 
-automated cookie firewall allowing or blocking cookies from being set according 
-to the policy you specify. The important words here are global and automated. 
-FireGate.js is able to automatically block cookies set by client-side JavaScript 
-code without the need for the developer to take special care of each chunk of 
-JavaScript code setting cookies. The way FireGate.js works, effectively reliefs 
-a developer from a great frustration which gets even bigger especially when 
-working with a CMS often accompanied by third-party code and plugins in order to 
-provide functionality bits.
+FireGate.js is a client side JavaScript library acting as a cookie firewall, allowing or blocking
+cookies according to the specified policy. It is able to automatically block cookies set by client
+side JavaScript code, relieving the developer from the hassle of handling each JavaScript code chunk
+that sets cookies.
 
-# Installation
-## 1. Download the latest version
-- [Non minified]()
-- [Minified]()
+<br>
+<br>
 
-## 2. Include it in your project
-**Example:**
+# Usage
+## 1. Load FireGate.js in your client side code.
 ```html
 <script src="https://example.com/js/firegate.min.js"></script>
 ```
-**NOTE: You must include it in your project as the first script to be run before 
-any other script get's executed.**
+**Note:** You should make sure that FireGate.js is the first script to run before any other script.
 
-## 3. Read the next sections
-FireGate.js makes itself available to your code through a global singleton 
-instance. Read the example and the documentation following this section for more
-information regarding its functionality.
+<br>
+
+## 2. Try the Quick Start Example.
+FireGate.js is available through the global **```FireGate```** instance. Try the example and consult
+the Guide to make the most out of FireGate.js.
+
+<br>
+<br>
 
 # Quick Start Example
 ```javascript
-/**
- * FireGate.js gets activated and filtering is enabled. Acts by default in a
- * fully permissive way regarding cookies, allowing all cookies to pass through.
- */
-FireGate.attach();
+// Start cookie filtering. By default, using the built-in permissive policy that allows all cookies.
+var success = FireGate.cookies.startFiltering();
 
-/** 
- * That means that the following cookie will be set except if the browser
- * disallows it because of its privacy settings.
- */
+// This cookie is allowed to be set except if browser's settings disallow it.
 document.cookie = 'cookieA=test';
 
-/*
- * Set and immediately enforce (because attach() has been already called) the
- * special built-in permissive policy which allows all cookies to pass through.
- * It is the default policy.
- */
-FireGate.setPolicy('permissive');
+// Immediately enforce the built-in permissive policy (actually already active by default).
+success = FireGate.cookies.setFilteringPolicy('permissive');
 
-// That means that the next cookie will also be set/passed to the browser.
+// That means that the next cookie will also be allowed/set to the browser.
 document.cookie = 'cookieB=test';
 
-/*
- * But now we immediately enforce the special built-in, fully restrictive
- * policy which allows no cookies to be set/passed to the browser.
- */
-FireGate.setPolicy('restrictive');
+// Immediately enforce the built-in restrictive policy, blocking all cookies from being set.
+FireGate.cookies.setFilteringPolicy('restrictive');
 
-// That means that the next cookie won't be passed to the browser.
+// That means that the next cookie won't be set.
 document.cookie = 'cookieC=test';
 
-/*
- * This policy blocks all cookies and allows only cookies named cookieD to pass
- * through.
- */
+// Prepare a custom policy that blocks all cookies except for the cookie named 'cookieD'.
 var customPolicy = {
   defaultsTo: 'block',
   rules: [{
@@ -75,15 +55,15 @@ var customPolicy = {
 };
 
 // Immediately enforce the new custom policy.
-FireGate.setPolicy(customPolicy);
+FireGate.cookies.setFilteringPolicy(customPolicy);
 
-// As a result the next cookie will be allowed.
+// As a result, the next cookie will be set.
 document.cookie = 'cookieD=test';
 
 // But the next cookie will be blocked.
 document.cookie = 'cookieE=test';
 
-// Now allow all cookies except for cookies named cookieE.
+// Prepare a custom policy that allows all cookies except for the cookie named 'cookieE'.
 var customPolicy2 = {
   defaultsTo: 'allow',
   rules: [{
@@ -94,127 +74,138 @@ var customPolicy2 = {
   }]
 };
 
-// Immediately enforce the new custom policy.
-FireGate.setPolicy(customPolicy2);
+// Immediately enforce the new policy.
+FireGate.cookies.setFilteringPolicy(customPolicy2);
 
-/*
- * If we try to set cookieE again which was previously blocked, it will not be
- * allowed because of the new policy in effect. Will do it in another way later.
- * Now, we will have FireGate.js free/set all previously blocked cookies which 
- * are allowed by the new policy. 
- */
+// cookieE is blocked again, now due to the new policy keeping it blocked.
+document.cookie = 'cookieE=test';
 
-FireGate.freeCookies(false);
+// Free (set) previously blocked cookies which are allowed by the active policy.
+var freedCookieNameArray = FireGate.cookies.freeCookies('allowed');
 
-/* 
- * Now document.cookie will contain cookieC which was previously blocked due to
- * the built-in restrictive policy set at the time and because it is allowed by
- * the default of the currently active policy.
- */
+// cookieC is now set, because it is allowed by customPolicy2 (due to its default action).
 console.log(document.cookie);
 
-/*
- * But now let's free every previously blocked cookie even if not allowed by
- * the current policy. In our example, that means that we will free cookieE.
- */
-FireGate.freeCookies(true);
+// Free/set all previously blocked cookies, even if not allowed by the active policy.
+FireGate.cookies.freeCookies('all');
 
-// It will contain cookieA, cookieB, cookieC, cookieD, cookieE. 
+// Contains cookieA, cookieB, cookieC, cookieD, cookieE.
 console.log(document.cookie);
 
-/*
- * Now, FireGate.js stopped its filtering. Any future cookie will be passed to 
- * the browser and only be stopped by the browser if its privacy settings tell
- * it so or there is a Firewall installed which blocks cookies.
- */
-FireGate.detach();
+// Stop filtering. Cookies will be passed to the browser without being checked.
+var success = FireGate.cookies.stopFiltering();
 ```
 
-# Documentation
-In order FireGate.js to function properly, it must be the first script to be run
-in your website/web application. That means that it must be included in your
-project before any other raw JavaScript code or script is loaded.
+<br>
+<br>
 
-The reason behind this special requirement is that FireGate.js must run before
-any other code is able to set cookies which you wish to block. Actually, if any
-cookie is set before FireGate.js is able to filter and block it, or before you
-have configured it to do so, FireGate.js will not be able to delete it
-afterwards.
+# Update Notice
+FireGate.js v2.0 features significant changes to its API. Read the changelog before updating to it.
+
+<br>
+<br>
+
+# Guide
+In order for FireGate.js to be truly effective, its filtering should start before any other
+JavaScript code is run, essentially allowing it to filter cookies early on.
+
+<br>
 
 ## Policies
 ---------------------------------------------
-FireGate.js is built upon the concept of policies. A policy specifies which
-cookies are allowed to be set or must be blocked. A policy may contain detailed
-rules which tell FireGate.js how to handle specific cookies. When FireGate.js is
-active, the active policy instructs FireGate.js how it must handle cookies.
+FireGate.js is built upon the concept of policies. A policy specifies which cookies are allowed to
+pass to the browser or should be blocked. A policy may contain rules instructing FireGate.js how to
+handle cookies that meet the conditions imposed by the rules.
 
-A policy may be a simple string (for built-in helper policies) or a Plain Old
-JavaScript Object (POJO) for a custom policy with more detailed rules. A single
-policy is active at each moment which may contain an unlimited number of rules.
+A policy may be a simple string (for built-in policies), or a Plain Old JavaScript Object (POJO)
+containing fine-grained rules setting out which cookies should be allowed or should be blocked. Two
+built-in policies are supported: **permissive** and **restrictive**.
 
-The flexible nature of policies, allows the developer to instantly configure the
-behavior of FireGate.js on the fly and without the need for page reloading. This
-is something especially useful for the purpose of having different policies
-enforced depending on user action such as when a user must first accept the
-usage of cookies.
+The flexible nature of policies enables configuring the behavior of FireGate.js on the fly without
+the need for page reloading. This is useful when requiring policy enforcement based on user action
+(such as user's acceptance of cookies) without forcing the user's browser to reload the page.
+
+<br>
 
 ### 1. Permissive Policy - Allowing all cookies
-The permissive policy is a special, built-in policy, provided by FireGate.js
-which permits all cookies being set by another code. It is active by default, 
-effectively making FireGate.js follow the normal browser behavior (and its
-privacy settings) until you specify another policy.
+The **permissive** policy is a built-in policy, allowing all cookies to pass through. It is active
+by default in order to prevent unintented side effects when filtering starts without explicitly
+having set a policy.
 
-**Example**
+**Example #1**
 ```javascript
-var success = FireGate.setPolicy('permissive');
+var success = FireGate.cookies.setFilteringPolicy('permissive');
 ```
-**Note that setting the permissive policy, does not automatically free any 
-previously blocked cookies which got blocked because of another policy.**
+**Note:** Setting the permissive policy, does not automatically set any previously blocked cookies.
+
+<br>
 
 ### 2. Restrictive Policy - Blocking all cookies
-The restrictive policy is a special, built-in policy, which blocks all cookies
-from being set by another code. No cookie is even passed to the browser for
-further processing and storage according to its privacy settings or any Firewall
-the user may have installed.
+The **restrictive** policy is a built-in policy, blocking all cookies from being set to the browser.
 
-**Example**
+**Example #2**
 ```javascript
-var success = FireGate.setPolicy('restrictive');
+var success = FireGate.cookies.setFilteringPolicy('restrictive');
 ```
-**Note that setting the restrictive policy, will not delete/unset any previously
-allowed cookies.**
+**Note:** Setting the restrictive policy will not delete any cookies already set.
+
+<br>
 
 ### 3. Custom Policy
-A custom policy is a Plain Old JavaScript Object (POJO) containing configuration
-fields. A custom policy may contain rules checked against each cookie with a
-default action (to allow or block) for any cookies not catched by the specified
-rules. That means that a default action is mandatory while specific rules are
-optional.
+A custom policy is shaped as a Plain Old JavaScript Object (POJO), enabling fine-tuned control on
+how FireGate.js should handle each cookie. A custom policy may contain an unlimited number of rules.
+Each rule specifies an action to apply to cookies meeting the conditions imposed by the rule. A
+cookie should satisfy all conditions of a rule in order for the latter's action to be enforced on
+the cookie. Rules' evaluation stops to the first rule that applies to a cookie, respecting rules'
+order as specified by the developer.
 
-**Example #1 - Custom policy allowing all cookies**
+Each policy object must have at least one property named **```defaultsTo```**, supporting the
+following values: **```'allow'```** and **```'block'```**. The said property informs FireGate.js of how
+it should handle cookies which are not catched by the rules of the policy. Moreover, a policy may
+contain no rules. If that is the case, then the default action is enforced on all cookies. The
+following examples demonstrate usage of **```defaultsTo```** property.
+
+**Example #3 - Custom policy allowing all cookies**
 ```javascript
-/**
- * Custom policy object which allows all cookies with no detailed rules.
- * Effectively the same as the built-in permissive policy.
- */
+// Custom policy without rules, allowing all cookies, acting as the permissive policy.
 var policy = {
   defaultsTo: 'allow'
 };
 ```
 
-**Example #2 - Custom policy blocking all cookies**
+**Example #4 - Custom policy blocking all cookies**
 ```javascript
-/**
- * Custom policy object which blocks all cookies with no detailed rules.
- * Effectively the same as the built-in restrictive policy.
- */
+// Custom policy without rules, allowing all cookies, acting as the restrictive policy.
 var policy = {
   defaultsTo: 'block',
 };
 ```
 
-**Example #3 - Custom policy blocking cookies by default with detailed rules**
+However, the aforementioned usage scenarios may be too simplistic in a real-world situation. The
+real power of a custom policy comes in the form of rules specifying an action to take on cookies
+meeting the conditions imposed by each rule.
+
+A custom policy object may contain a **```rules```** property, holding an array of objects that
+specify an action to take on cookies that meet specific requirements. Each rule contained in the
+**```rules```** array is shaped an as object requiring exactly two properties: **```action```** and
+**```when```**:
+- **```action```**: supports two values: **```'allow'```** and **```'block'```**.
+- **```when```**: is shaped as an object:
+  - each property specifies a test to run on each cookie.
+  - each property's value is a regular expression used by the test against the cookie's details.
+
+Each property in the **```when```** object is named after a test supported by FireGate.js.
+Currently, the only supported test is **```cookieName```** that allows checking the name of a cookie according to a regex specified. The action specified by **```action```** is enforced on a cookie if
+the latter meets the **```when```** conditions of a rule.
+
+In case more than one rules are registered in a policy, each cookie is checked against each rule,
+respecting the order of rules as specified by the developer. Rules' evaluation stops on the first
+rule to apply on a cookie. If no rules apply to a cookie, **```defaultsTo```** action is enforced on
+it. The following examples englighten the usage of rules.
+
+**Example #5 - Custom policy with rules blocking cookies by default**
 ```javascript
+// Block all cookies except for those named cookieA, cookieA1, cookieA2, etc.
 var policy = {
   defaultsTo: 'block',
   rules:[{
@@ -230,12 +221,13 @@ var policy = {
   }]
 };
 ```
-The policy shown above will allow any cookie named **cookieA** as well as every
-cookie named **cookieA1**, **cookieA2**, etc. The policy will block any other 
-cookie not catched by the rules because the policy defaults to **block**.
 
-**Example #4 - Custom policy with multiple overlapping rules**
+**Example #6 - Custom policy with multiple overlapping rules**
 ```javascript
+/**
+ * Allow all cookies except for the cookie named 'cookieA'. The first rule takes precedence as it is
+ * the first rule to apply to cookieA.
+ */
 var policy = {
   defaultsTo: 'allow',
   rules:[{
@@ -251,138 +243,155 @@ var policy = {
   }]
 };
 ```
-The policy shown above will block any cookie named **cookieA** but it will allow
-any other cookie. The second rule allows **cookieA** but the first one does not. 
-The first matching rule has utmost priority and its action is being enforced.
+
+<br>
 
 ## Setting a policy
-You may set a policy as shown below:
+---------------------------------------------
+Setting a policy is performed using **```cookies.setFilteringPolicy()```** function, passing either
+a string corresponding to a supported built-in policy, or passing a policy object. The function
+returns true or false depending on the success of the operation.
+
+Setting a policy does not automatically enforce it, however it does replace the previously loaded
+policy. A policy is enforced when filtering is activated. If filtering is enabled at the time of
+setting a policy, then the new policy is immediately enforced for future cookie attempts. You may
+set a policy as demonstrated below:
+
+**Example #7**
 ```javascript
-// Setting a custom policy object.
-var success = FireGate.setPolicy(policy);
-// Setting the built-in permissive policy.
-success = FireGate.setPolicy('permissive');
-// Setting the built-in restrictive policy.
-success = FireGate.setPolicy('restrictive');
-// Setting a non-existent built-in policy.
-success = FireGate.setPolicy('restrictive_invalid');
+// Set a policy object.
+var success = FireGate.cookies.setFilteringPolicy(policy);
+
+// Enforces the policy set above.
+success = FireGate.cookies.startFiltering();
+
+// Set the built-in permissive policy which immediatelly get's enforced.
+success = FireGate.cookies.setFilteringPolicy('permissive');
+
+// Set the built-in restrictive policy, replacing the permissive policy.
+success = FireGate.cookies.setFilteringPolicy('restrictive');
 ```
-In the example shown above, each call to ```setPolicy()``` will 
-return ```true``` if the policy supplied is valid and gets successfully set up. 
-In the end, the last valid policy will be applied overwriting the previously set 
-valid policies. That means that the last policy set will return false and the 
-policy to be enforced will be the third one, the **restrictive** policy.
+**Note:** The **permissive** policy is already enabled by default when starting cookie filtering.
 
-## Attaching (activating filtering)
-FireGate.js refers to the action of being activated / filtering cookies as being
-_attached_. This is because, FireGate.js _attaches_ its filtering mechanism to 
-the browser on which it runs. 
+<br>
 
-In order to have FireGate.js start filtering, you must attach it and set a
-policy. The order of actions does not matter. You may either first attach it and 
-then set a policy or the opposite. If you first attach it and then set a policy,
-FireGate.js will initially enforce the **default permissive** policy and switch 
-to the new one, as soon as you have set it. If you set a policy first and then 
-attach FireGate.js, it will start filtering using your own policy as soon as you
-have attached it. 
+## Activating filtering
+---------------------------------------------
+Filtering is enabled using the **```cookies.startFiltering()```** function that returns true or
+false depending on the success of the operation. If no policy has been set before calling this
+function, then the permissive policy is enforced by default, allowing all cookies to pass through.
 
-**Example #1 - Attaching**
+**Example #8**
 ```javascript
-// Returns true or false.
-var success = FireGate.attach();
+/**
+ * Start filtering using default permissive policy which allows all cookies.
+ * If false is returned, then filtering wasn't enabled and all cookies are directly passed to the
+ * browser. This behavior should be encountered only if the browser does not support the
+ * functionality required by FireGate.js or if filtering has already started.
+ */
+var success = FireGate.cookies.startFiltering();
+```
+
+**Example #9 - Setting a policy when filtering is already enabled**
+```javascript
 // Filtering using default permissive policy which allows all cookies.
-```
-When calling ```attach()```, it will return either true or false:
-- ```true``` if FireGate.js successfully attached its filtering mechanism. The
-active policy is enforced and any other future policy will be immediately
-enforced when it is set.
-- ```false``` if FireGate.js failed to attach its filtering mechanism. The active
-policy is not enforced. The browser continues operating on its own according to
-its privacy settings. ```false``` may be returned if the browser does not
-support the functionality required by FireGate.js or if the system is already
-attached.
+var success = FireGate.cookies.startFiltering();
 
-**Example #2 - Attaching before setting a policy**
+// Now filtering using the restrictive policy which blocks all cookies. It immediately takes effect.
+success = FireGate.cookies.setFilteringPolicy('restrictive');
+```
+
+**Example #10 - Setting a policy before starting filtering**
 ```javascript
-var success = FireGate.attach();
-// Filtering using default permissive policy which allows all cookies.
-FireGate.setPolicy('restrictive');
-// Now filtering using the restrictive policy. It immediately takes effect.
+var success = FireGate.cookies.setFilteringPolicy('restrictive');
+
+// Filtering starts using the restrictive policy.
+success = FireGate.cookies.startFiltering();
 ```
 
-**Example #3 - Setting a policy before attaching**
+**Example #11 - Setting an non-existent built-in policy before starting filtering**
 ```javascript
-FireGate.setPolicy('restrictive');
-var success = FireGate.attach();
-// Filtering using the restrictive policy.
+// The specified built-in policy is invalid. False will be returned.
+var success = FireGate.cookies.setFilteringPolicy('restrictive_invalid');
+
+// Starting filtering using the default permissive policy.
+success = FireGate.cookies.startFiltering();
 ```
 
-**Example #4 - Setting an non-existent policy before attaching**
+<br>
+
+## Deactivating filtering
+---------------------------------------------
+Filtering is deactivated using the **```cookies.stopFiltering()```** function which returns true or
+false to signal the success of the operation. All cookies are passed to the browser when filtering
+stops. False will be returned if filtering is already disabled.
+
+**Example #12**
 ```javascript
-FireGate.setPolicy('restrictive_invalid');
-var success = FireGate.attach();
-// Filtering using the default permissive policy.
-```
-In the example shown above, the policy enforced will be the default built-in
-**permissive** policy because **restrictive_invalid** policy does not exist.
+var success = FireGate.cookies.stopFiltering();
 
-## Detaching (deactivating filtering)
-In the same way you attach FireGate.js, you may detach it in order to have it 
-stop filtering. That means that the active policy will stop being enforced for 
-cookies being set after FireGate.js has stopped filtering.
-
-**Example #1 - Detaching**
-```javascript
-// Returns true or false.
-var success = FireGate.detach(); 
-// Now all cookies allowed - no policy enforcement - plain browser behavior
+// Now all cookies are allowed - no policy enforcement, just the browser's behavior.
 ```
-When calling ```detach()```, it will return either true or false:
-- ```true``` if FireGate.js successfully detached its filtering mechanism. The 
-active policy is not enforced. The last policy set will be enforced only when 
-```attach()``` is called again.
-- ```false``` if FireGate.js failed to detach its filtering mechanism.
-```false``` will be returned if FireGate.js is not currently attached.
+
+<br>
 
 ## Freeing cookies
-FireGate.js supports freeing, that is, setting previously blocked cookies. It is
-able to free all previously blocked cookies or only the cookies which are
-allowed by the current policy, supposed that the currently active policy is
-different to the policy that was active when the respective got blocked.
+---------------------------------------------
+FireGate.js supports freeing, that is, setting previously blocked cookies. It supports setting all
+previously blocked cookies, only those allowed by the current policy, or specific cookies without
+checking if allowed by the current policy.
 
-**Example #1:**
+**Example #13:**
 ```javascript
-/*
- * This will free all cookies previously blocked which are allowed by the
- * current policy.
- */
-FireGate.freeCookies(false);
+// Free all cookies previously blocked, but now allowed by the current policy.
+FireGate.cookies.freeCookies('allowed');
 ```
 
-**Example #2:**
+**Example #14:**
 ```javascript
-/*
- * This will free all cookies previously blocked even if not allowed by the
- * current policy.
- */
-FireGate.freeCookies(true);
+// Free all previously blocked cookies, even if not allowed by the current policy.
+FireGate.freeCookies('all');
 ```
-Once a cookie is freed/set, there is no way to delete it using FireGate.js. You
-should delete/expire it on your own either using code or using the browser's
-controls.
+
+**Example #15:**
+```javascript
+// Free all previously blocked cookies, even if not allowed by the current policy.
+FireGate.freeCookies(['cookie1', 'cookie2']);
+```
+
+Once a cookie is freed/set, there is no way to delete/unset it using FireGate.js.
+
+<br>
+<br>
 
 # Frequently Asked Questions
 
 ## How FireGate.js works?
-FireGate.js works by intercepting document.cookie. It replaces the browser\'s accessor functions with its own. It then filters everything going in and our of the browser\'s cookie storage according to the specified policy.
-
-## Which is the key feature of FireGate.js?
-The way FireGate.js works, allows it to handle cookies before even being set by other JavaScript code instead of acting on a delayed basis. This enables it to act as an automatic and global firewall.
+FireGate.js intercepts document.cookie, replacing the browser's accessor functions with its own. It
+filters everything going in and out of the browser's cookie storage according to the specified
+policy.
 
 ## Does FireGate.js automatically handle all cookies?
-It depends. FireGate.js is able to automatically handle/intercept all cookies set by other JavaScript code provided that it is activated before any other cookie-setting code is run. It doesn't handle cookies set in iframes as it is not possible to directly inject code in an iframe due to each browser's security features.
+FireGate.js is able to automatically handle/intercept all cookies set by other JavaScript code
+provided that it is activated with an appropriate cookie policy before any other cookie-setting code
+is run. However, it can't handle cookies set in iframes.
 
-# Our Great Supporters
-![Browserstack](https://firegatejs.anastasiadis.online/assets/browserstack-logo-200x43.png)
+<br>
+<br>
 
-We use [BrowserStack](https://browserstack.com) for R&D and testing purposes while developing FireGate.js.
+# Browser Compatibility
+We tested FireGate.js on a vast array of devices and OS versions offered by
+[BrowserStack](https://browserstack.com) using the major browsers. The following table presents the results. Empty cells signify either test failure or browser absense.
+
+| OS                 | Chrome  | Firefox | Safari    | Opera   | Internet Explorer | Edge    |
+|--------------------|---------|---------|-----------|---------|-------------------|---------|
+| Android (4.3+)     | ✔       | ✔       |           |         |                   |         |
+| iOS (10+)          | ✔       |         | ✔         |         |                   |         |
+| Windows            | ✔ (43+) | ✔ (20+) |           | ✔ (30+) | ✔ (10+)           | ✔ (15+) |
+| macOS              | ✔ (43+) | ✔ (20+) | ✔ (10.1+) | ✔ (30+) |                   |         |
+
+<br>
+<br>
+
+# FireGate.js Great Supporters
+[BrowserStack](https://browserstack.com) is used for R&D and testing purposes while developing FireGate.js.
