@@ -2,7 +2,7 @@
 
 # Changelog
 
-## 2.0
+## 2.0 - September 18, 2021
 
 ### Added
 - **freeCookies()** now supports passing an array of cookie names to free/set.
